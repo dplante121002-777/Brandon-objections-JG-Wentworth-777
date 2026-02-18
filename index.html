@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ClosenStein — Control Cockpit (Master)</title>
+
+<style>
+:root{
+  --jg-green:#0bb852;
+  --jg-deep:#0a7a3a;
+  --bg:#f5fbf7;
+  --card:#ffffff;
+  --line:#dbe8df;
+  --text:#102316;
+  --muted:#6c7a71;
+  --warn:#ffb100;
+  --danger:#ef4444;
+  --info:#2563eb;
+  --shadow: 0 10px 22px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  font-size:16px;
+}
+header{
+  position:sticky;top:0;z-index:50;
+  background:#fff;border-bottom:1px solid var(--line);
+  padding:10px 14px;
+  display:flex;align-items:center;gap:12px;
+}
+.logo{
+  width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(135deg,var(--jg-green),var(--jg-deep));
+  display:grid;place-items:center;color:#fff;font-weight:900;font-size:18px;
+  user-select:none;
+}
+h1{margin:0;font-size:16px;line-height:1.1}
+.sub{font-size:12px;color:var(--muted);margin-top:2px}
+
+.container{max-width:1100px;margin:14px auto 40px;padding:0 12px 20px}
+
+.topbar{
+  background:#fff;border:1px solid var(--line);border-radius:14px;
+  padding:10px 12px;box-shadow:var(--shadow);margin-bottom:10px;
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+}
+.left, .right{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+.pill{
+  background:#f7fbf8;border:1px solid var(--line);
+  padding:7px 10px;border-radius:999px;
+  display:flex;gap:8px;align-items:center;
+  font-size:12px;color:var(--muted);
+}
+.pill strong{color:var(--text)}
+.pill select, .pill input{
+  font-size:12px;border-radius:999px;border:1px solid #ccd8cf;
+  padding:6px 10px;background:#fff;min-width:160px;
+}
+.pill .tinybtn{
+  border:1px solid var(--line);background:#f0f5f2;color:var(--text);
+  padding:6px 10px;border-radius:999px;font-size:12px;cursor:pointer;
+}
+
+.btn{
+  border:none;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.btn-primary{background:linear-gradient(135deg,var(--jg-green),var(--jg-deep));color:#fff}
+.btn-ghost{background:#f0f5f2;color:var(--text);border:1px solid var(--line)}
+.btn-danger{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+
+.stepper{
+  background:#fff;border:1px solid var(--line);border-radius:14px;
+  padding:10px 12px;box-shadow:var(--shadow);margin-bottom:10px;
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+}
+.step{
+  border:1px solid var(--line);
+  background:#f7fbf8;
+  color:var(--muted);
+  padding:7px 12px;border-radius:999px;
+  font-size:13px;cursor:pointer;user-select:none;
+}
+.step.active{
+  background:#0a7a3a;color:#fff;border-color:#0a7a3a;font-weight:800;
+}
+
+.card{
+  background:var(--card);border-radius:14px;border:1px solid var(--line);
+  padding:14px 15px;margin-bottom:10px;box-shadow:var(--shadow);
+}
+.card h2{margin:0 0 6px;font-size:17px}
+.hint{margin:0 0 10px;font-size:13px;color:var(--muted)}
+
+.grid{display:flex;flex-wrap:wrap;gap:10px}
+.col{flex:1 1 260px}
+
+label{font-size:13px;font-weight:700;display:block;margin-bottom:5px}
+select, input, textarea{
+  width:100%;padding:9px 10px;border-radius:12px;border:1px solid #ccd8cf;
+  font-family:inherit;font-size:14px;background:#fff;
+}
+textarea{min-height:220px;resize:vertical;white-space:pre-wrap;line-height:1.35}
+
+.script{
+  border-radius:12px;border:1px dashed var(--line);background:#fafdfb;
+  padding:10px 12px;font-size:14px;white-space:pre-wrap;
+}
+.highlight{
+  border-radius:12px;border:2px solid var(--warn);background:#fff9e6;
+  padding:10px 12px;font-size:14px;white-space:pre-wrap;
+}
+.notice{
+  border-radius:12px;border:1px solid #bfdbfe;background:#eff6ff;
+  padding:10px 12px;font-size:13px;color:#1d4ed8;white-space:pre-wrap;
+}
+.softwarn{
+  border-radius:12px;border:1px solid #fde68a;background:#fff7da;
+  padding:10px 12px;font-size:13px;color:#7a4b00;white-space:pre-wrap;
+  display:none;
+}
+.lockline{
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+  margin-top:10px;padding-top:10px;border-top:1px solid var(--line);
+}
+.badge{
+  display:inline-block;padding:3px 8px;border-radius:999px;font-size:12px;
+  border:1px solid var(--line);background:#f5faf7;margin-right:6px;
+}
+.badge.green{background:#e8fbf0;border-color:#c6e8d0;color:#0a7a3a;font-weight:900}
+.badge.info{background:#dbeafe;border-color:#bfdbfe;color:#1d4ed8;font-weight:800}
+.badge.warn{background:#fff7da;border-color:#fde68a;color:#7a4b00;font-weight:900}
+.badge.danger{background:#fee2e2;border-color:#fecaca;color:#b91c1c;font-weight:900}
+
+.inline{
+  display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+}
+.chk{
+  display:flex;gap:8px;align-items:center;
+  padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:#fff;
+}
+.chk input{width:auto;transform:scale(1.05)}
+.small{font-size:12px;color:var(--muted)}
+
+hr{border:none;border-top:1px solid var(--line);margin:12px 0}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="logo">JG</div>
+  <div>
+    <h1>ClosenStein — Control Cockpit (Master)</h1>
+    <div class="sub">Comprehensive + effective. Minimal friction. Compliance is invisible until needed.</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="left">
+      <div class="pill">
+        <strong>State:</strong>
+        <select id="stateSelTop"></select>
+        <span class="badge info" id="modelBadgeTop">Model: —</span>
+      </div>
+
+      <div class="pill">
+        <strong>Rep:</strong>
+        <input id="repName" placeholder="Saved once" />
+        <button class="tinybtn" type="button" onclick="saveRepName()">Save</button>
+      </div>
+
+      <div class="pill">
+        <strong>Status:</strong>
+        <span class="badge warn" id="statusSoftPull">Soft Pull: Not yet</span>
+        <span class="badge warn" id="statusRecording">Recording: Not yet</span>
+        <span class="badge warn" id="statusAgreement">Agreement: Locked</span>
+      </div>
+    </div>
+
+    <div class="right">
+      <button class="btn btn-ghost" type="button" onclick="copyFrom('openerScript')">Copy Opener</button>
+      <button class="btn btn-ghost" type="button" onclick="copyFrom('creditScript')">Copy Credit</button>
+      <button class="btn btn-ghost" type="button" onclick="copyFrom('solutionScript')">Copy Solution</button>
+      <button class="btn btn-primary" type="button" onclick="scrollToId('sectionOpener')">You are here</button>
+      <button class="btn btn-danger" type="button" onclick="resetAll()">Reset</button>
+    </div>
+  </div>
+
+  <!-- STEPPER -->
+  <div class="stepper" id="stepper">
+    <div class="step active" data-target="sectionOpener">1) Opener</div>
+    <div class="step" data-target="sectionCredit">2) Credit + Reality</div>
+    <div class="step" data-target="sectionSolution">3) Solution</div>
+    <div class="step" data-target="sectionEnroll">4) Enroll</div>
+    <div class="step" data-target="sectionCompliance">5) Recording + Agreement</div>
+  </div>
+
+  <!-- 1) OPENER -->
+  <div class="card" id="sectionOpener">
+    <h2>1) Opener</h2>
+    <p class="hint">Minimal. Calm. Heavy. One question, then shut up.</p>
+
+    <div class="grid">
+      <div class="col">
+        <label>Client State (Pre-Credit)</label>
+        <select id="stateSelOpener"></select>
+        <div class="small" id="stateNoteOpener">State drives NSL / Standard / WV logic automatically.</div>
+      </div>
+
+      <div class="col">
+        <label>Client Name (optional)</label>
+        <input id="clientName" placeholder="Optional (you can leave blank)" />
+        <div class="small">You do NOT need this field to run the call.</div>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="highlight" id="openerScript">
+"Client Name", this is "Reps Name" at JG Wentworth on a recorded line, it looks like you were looking for some help with debt? (Pause) shhh
+    </div>
+
+    <div class="softwarn" id="nslPopup">
+NEW START LEGAL — PRE-CREDIT FLOW (STATE)
+
+PRE-CREDIT FRAME
+“There are many options for getting out of Debt, We’ll review your information to determine which options apply.
+One option may be with New Start Legal — a law firm that provides attorney representation in your state, would you like to hear all the options for getting out of debt?”
+
+If they say Yes: Proceed to Client Detail tab and Verify all the Client Details
+
+I have your First name as "First Name and you r LAst Name as "Last name"
+I have your DOB as "DOB"
+I have your Address as "Address Read Slow do n ot miss Apt Number"
+You live in City "City name"
+You live in "State name"
+and you Zip is "Zip Code"
+
+Then ask question: Does that all sound Accurate? Wait for a YES
+
+Then go to the Social Security Section and type in 5 Zeroes "00000 and ask
+
+Ok so I just need the last 4 of your social so I can get into the rest of your file whenever you are ready.
+Then type in the last 4 digits after the 5 Zeroes 000001234
+
+Then Click Save Button
+After save button click the Credit Tab
+    </div>
+
+    <div class="notice" style="margin-top:10px">
+Soft Pull Authorization (ALL STATES):
+“We start with a soft credit check with no negative impact. It lets us confirm what we can assist with. Do I have your authorization to review your credit with you now?”
+If yes: Click Authorization Tab → Pull Credit Tab → IMPORT
+Then pull up Accounts and say:
+“I see you have $xxxxx dollars in enrollable debt that's not secured and you are paying $xxxxx a month — is that about accurate?” (Pause)
+Then on Creditors tab click the top of header for checked boxes so checked creditors rise to the top.
+    </div>
+
+    <div class="lockline">
+      <div class="inline">
+        <label class="chk" style="margin:0">
+          <input type="checkbox" id="softPullChk" />
+          Soft Pull Authorized (click once)
+        </label>
+        <span class="small">This is the only “pre-credit” control we keep.</span>
+      </div>
+      <button class="btn btn-primary" type="button" onclick="goNext('sectionCredit')">Next → Credit + Reality</button>
+    </div>
+  </div>
+
+  <!-- 2) CREDIT + REALITY -->
+  <div class="card" id="sectionCredit">
+    <h2>2) Post-Credit → SalesTool (Reality + Consequence)</h2>
+    <p class="hint">Do NOT repsplain. Ask. Pause. Let them talk. One pass.</p>
+
+    <div class="highlight" id="creditScript">
+1) Reality + Consequence (verbatim discipline)
+
+“While we’re waiting here, I want to understand the situation so I don’t make assumptions.”
+
+1) “How did this start — what was going on when the debt began?”
+(quiet)
+
+2) “When you pay each month… does it feel like it’s mostly interest?”
+(quiet)
+
+3) “How have savings been lately?”
+(quiet)
+
+4) “Any major purchases in the next six months — home, car, anything?”
+(quiet)
+
+5) “Are these cards still used daily… or are they basically bills now?”
+(quiet)
+
+2) Transition + Send SalesTool Link
+
+“Now I’m going to send a secure link so you can see what I see on the screen.”
+
+→ CLICK ON CALCULATOR tab and click Full Circle then Half Circle to lock in quote then click Check to confirm it’s locked.
+→ Hit Envelope icon
+→ Send SalesTool invite (Email + Text)
+→ Ask customer to look for invitation
+→ Open Hello screen, wait for their name, then connect
+
+3) Screen Control
+
+“Turn your phone sideways so it fills the screen.
+
+I’m only using two tabs:
+• Your credit report
+• Your future savings
+
+That way you see it, not just hear it.”
+
+4) No-Loan Frame + Good News Pivot
+
+“You didn’t qualify for loan options — mostly utilization/risk.
+
+But I do have good news.
+
+What the approval is for is our interest-free debt restructuring pathway:
+• We work directly with creditors
+• We stop future compounding interest
+• And often reduce principal too
+
+So instead of paying interest, you pay balances down.”
+
+5) Two Conditions
+
+“Two conditions so there are no surprises:
+
+1) No more charging once the first deposit runs.
+
+2) Short-term credit impact can happen early while accounts are worked — temporary. As balances drop, most clients are stronger long-term.
+
+Goal: an end date.”
+    </div>
+
+    <div class="softwarn" id="softPullReminder">
+Quick note: You haven’t clicked “Soft Pull Authorized” yet. If you already got the yes, click it now (top of Opener).
+    </div>
+
+    <div class="lockline">
+      <div class="small">If momentum slips: ask “I feel like something shifted — what’s coming up for you?” Then shut up.</div>
+      <button class="btn btn-primary" type="button" onclick="goNext('sectionSolution')">Next → Solution</button>
+    </div>
+  </div>
+
+  <!-- 3) SOLUTION -->
+  <div class="card" id="sectionSolution">
+    <h2>3) Solution (Gravity Zone)</h2>
+    <p class="hint">This is where you stop talking. Calm authority. Silence closes.</p>
+
+    <div class="highlight" id="solutionScript">
+Transition to Solution – Calm Authority
+“So based on everything you shared — the balances, the stress, the late nights thinking about it — here’s what we can structurally do.”
+
+Payment Presentation (do this slow)
+• Slow your pace
+• Lower your tone
+• Take one breath
+
+Then:
+“Based on the structure we built, your monthly program payment comes out to $___ per month.”
+(Pause. Do not explain. Do not defend.)
+
+When momentum slips:
+“I feel like something shifted just now. What’s coming up for you?”
+(Stop talking.)
+
+Objection isolation:
+“Is it the amount… or is it the idea of committing today?”
+(Make them choose.)
+    </div>
+
+    <div class="lockline">
+      <div class="small">Rule: after the number, you do not speak until they speak.</div>
+      <button class="btn btn-primary" type="button" onclick="goNext('sectionEnroll')">Next → Enroll</button>
+    </div>
+  </div>
+
+  <!-- 4) ENROLL -->
+  <div class="card" id="sectionEnroll">
+    <h2>4) Enroll (Expense Report → ACH)</h2>
+    <p class="hint">Simple, calm logistics. No chaos. Keep it boring.</p>
+
+    <div class="script">
+Expense Report:
+“Ok so lets do a quick expense report...when you get paid is it this Friday or next?”
+“Thank you, after taxes what does your paycheck come out to?”
+
+(If bi-weekly: multiply by 26 then divide by 12 to get monthly income.)
+
+Fill out ALL fields (anything not listed = 0, cannot be blank).
+Choose Hardship dropdown and type in reason.
+Hit SAVE.
+
+NOTE: Make sure they are at least $75 positive — or NO GO.
+
+Then go to ACH tab.
+    </div>
+
+    <div class="highlight" style="margin-top:10px">
+ACH TAB:
+
+1) First Deposit / Pay Date
+“Which paycheck feels safest for the first deposit?”
+• Confirm pay schedule
+• Choose paycheck that feels safest
+• Set first draft date (7–14 days out)
+• Repeat date + amount back
+
+2) Banking Details
+“Quick recap: we agreed the deposit fits your budget, builds your dedicated account, and nothing happens without your approval.
+We use the same checking you already pay bills from.
+Read me the routing number — I’ll repeat it back slowly.”
+• Bank name
+• Routing number (repeat back)
+• Account number (repeat back)
+• Confirm checking (not savings)
+    </div>
+
+    <div class="lockline">
+      <div class="small">Keep your tone low. The more calm you are, the more safe it feels.</div>
+      <button class="btn btn-primary" type="button" onclick="goNext('sectionCompliance')">Next → Recording + Agreement</button>
+    </div>
+  </div>
+
+  <!-- 5) COMPLIANCE + AGREEMENT -->
+  <div class="card" id="sectionCompliance">
+    <h2>5) State / Recording → Agreement (Invisible Control)</h2>
+    <p class="hint">Compliance shows only what matters for THIS state.</p>
+
+    <div class="notice" id="stateModelLine">State model loads here…</div>
+
+    <div class="softwarn" id="nslDisclosureBox">
+NSL DISCLOSURE (Read before playing recording)
+
+“The 29% fee is included in your monthly deposit — no separate legal-plan bill.
+
+I’m going to play a brief recording from their attorney to confirm your rights and the program.”
+    </div>
+
+    <div class="softwarn" id="flStandardDisclosureBox">
+FLORIDA (Standard) — Read before playing recording
+
+“Since you’re in a standard state, this is a non-attorney debt resolution program. It’s not a loan or bankruptcy.
+
+You build funds in a dedicated account in your name, and we negotiate with creditors.
+
+Your monthly deposit and estimated term include the 25% program fee.
+• No settlement happens without your approval
+• You can cancel at any time
+• Any unearned funds in your dedicated account belong to you
+
+I’m going to play a quick compliance recording to confirm what we discussed.”
+    </div>
+
+    <div class="highlight" id="recordingIntroBox" style="margin-top:10px">
+“Because you’re in [STATE], there’s a specific disclosure/recording I need to play so everything is compliant.”
+
+Confirm state model:
+NSL → Play NSL Recording
+AADR/Standard → Play AADR Recording
+WV → Play WV Recording
+
+Florida only: read FL block before agreement
+    </div>
+
+    <div class="softwarn" id="flBeforeAgreementBox">
+FLORIDA ONLY — READ BEFORE SENDING AGREEMENT (TP License)
+
+“You may give notice of cancellation to us in writing within 7 business days after receipt of the confirmation. Furthermore JG Wentworth’s policy allows you to cancel at any time and any unearned funds will be returned to you from your dedicated account.
+
+The license number issued by the Florida Department of Agriculture and Consumer Services for the commercial telephone seller is TC5615 and the salesperson TP116151. Our address is 1200 Morris Drive, Chesterbrook, PA 19087.”
+    </div>
+
+    <hr />
+
+    <div class="inline">
+      <label class="chk" style="margin:0">
+        <input type="checkbox" id="recordingChk" />
+        Recording Played (click once)
+      </label>
+      <span class="small">Once checked, Agreement unlocks. No yelling. Just logic.</span>
+    </div>
+
+    <div class="softwarn" id="agreementLockNote" style="display:block;margin-top:10px">
+Agreement is locked until Recording Played is checked.
+    </div>
+
+    <div class="lockline">
+      <div class="inline">
+        <button class="btn btn-ghost" type="button" onclick="copyFrom('recordingIntroBox')">Copy Recording Intro</button>
+        <button class="btn btn-ghost" type="button" onclick="copyStateBlock()">Copy State Disclosure</button>
+      </div>
+      <button class="btn btn-primary" id="sendAgreementBtn" type="button" disabled onclick="sendAgreementDemo()">
+        Send Agreement (Unlocked after Recording)
+      </button>
+    </div>
+
+    <div class="script" style="margin-top:10px">
+Pre-Enrollment Review (first month — per your process):
+Email: enrollmentprereview@jgwentworth.com
+CC: manager email, director email
+
+Only after approval:
+Document tab → RUN → OK (emails agreement)
+Have client open email and sign while on the phone.
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+/* =========================
+   State / Model Logic
+========================= */
+const NSL_STATES = new Set([
+  "Connecticut","Delaware","Georgia","Hawaii","Illinois","Kansas",
+  "Maine","Minnesota","New Hampshire","New Jersey","North Dakota",
+  "Ohio","Oregon","Rhode Island","South Carolina","Vermont",
+  "Washington","Wisconsin","Wyoming"
+]);
+const WV_STATES = new Set(["West Virginia"]);
+
+const STATES = [
+  "Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware",
+  "Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana",
+  "Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana",
+  "Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina",
+  "North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island",
+  "South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington",
+  "West Virginia","Wisconsin","Wyoming"
+];
+
+function modeFor(state){
+  if (WV_STATES.has(state)) return "WV";
+  if (NSL_STATES.has(state)) return "NSL";
+  return "STANDARD"; // includes Florida + Colorado as Standard/AADR in this cockpit
+}
+function modelText(state){
+  const m = modeFor(state);
+  if (m==="NSL") return "NSL (Attorney) — 29%";
+  if (m==="WV") return "WV (Attorney) — 29%";
+  return "Standard/AADR — 25%";
+}
+
+function populateStates(){
+  const topsel = document.getElementById("stateSelTop");
+  const openSel = document.getElementById("stateSelOpener");
+  [topsel, openSel].forEach(sel=>{
+    sel.innerHTML = "";
+    STATES.forEach(s=>{
+      const o=document.createElement("option");
+      o.value=o.textContent=s;
+      sel.appendChild(o);
+    });
+  });
+  topsel.value = "Florida";
+  openSel.value = "Florida";
+}
+
+function syncStateEverywhere(state){
+  const top = document.getElementById("stateSelTop");
+  const opener = document.getElementById("stateSelOpener");
+  if (top.value !== state) top.value = state;
+  if (opener.value !== state) opener.value = state;
+
+  // badges
+  document.getElementById("modelBadgeTop").textContent = "Model: " + modelText(state);
+
+  // opener script personalization (optional)
+  refreshOpenerScript();
+
+  // NSL popup visibility
+  const m = modeFor(state);
+  const nslBox = document.getElementById("nslPopup");
+  if (m==="NSL"){
+    nslBox.style.display = "block";
+    nslBox.textContent = nslBox.textContent.replaceAll("(STATE)", "(" + state + ")").replaceAll("STATE", state);
+  }else{
+    nslBox.style.display = "none";
+  }
+
+  // compliance visibility
+  const stateLine = document.getElementById("stateModelLine");
+  stateLine.textContent = `State: ${state} • Model: ${modelText(state)}`;
+
+  const nslDisc = document.getElementById("nslDisclosureBox");
+  const flDisc = document.getElementById("flStandardDisclosureBox");
+  const flBefore = document.getElementById("flBeforeAgreementBox");
+
+  // reset visibility
+  nslDisc.style.display = "none";
+  flDisc.style.display = "none";
+  flBefore.style.display = "none";
+
+  if (m==="NSL"){
+    nslDisc.style.display = "block";
+  }
+  if (state==="Florida"){
+    flDisc.style.display = "block";         // Florida standard disclosure before recording
+    flBefore.style.display = "block";       // Florida TP license block before agreement
+  }
+  // WV handled by intro box (no extra text given by you)
+  // Colorado: standard model, no extra blocks unless you add them later
+
+  // recording intro box state token
+  const recIntro = document.getElementById("recordingIntroBox");
+  recIntro.textContent = recIntro.textContent.replace("[STATE]", state);
+
+  // soft pull reminder in Credit section if not checked
+  renderSoftPullReminder();
+}
+
+/* =========================
+   Rep name persistence
+========================= */
+function loadRepName(){
+  const saved = localStorage.getItem("repName") || "";
+  const el = document.getElementById("repName");
+  if (saved) el.value = saved;
+}
+function saveRepName(){
+  const el = document.getElementById("repName");
+  localStorage.setItem("repName", (el.value || "").trim());
+}
+
+/* =========================
+   Scripts / copy helpers
+========================= */
+function refreshOpenerScript(){
+  const name = (document.getElementById("clientName").value || "").trim();
+  const rep = (document.getElementById("repName").value || "Reps Name").trim() || "Reps Name";
+
+  // You asked for this EXACT wording. We only optionally insert the client name if typed.
+  const openerLine = `"Client Name", this is "Reps Name" at JG Wentworth on a recorded line, it looks like you were looking for some help with debt? (Pause) shhh`;
+  const out = openerLine
+    .replaceAll(`"Client Name"`, name ? `"${name}"` : `"Client Name"`)
+    .replaceAll(`"Reps Name"`, rep);
+
+  document.getElementById("openerScript").textContent = out;
+}
+
+async function copyFrom(id){
+  const el = document.getElementById(id);
+  const text = el ? (el.value || el.textContent || "") : "";
+  if (!text.trim()) return alert("Nothing to copy.");
+  try{
+    await navigator.clipboard.writeText(text.trim());
+    alert("Copied.");
+  }catch(e){
+    const ta=document.createElement("textarea");
+    ta.value=text.trim(); ta.style.position="fixed"; ta.style.left="-9999px";
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    alert("Copied.");
+  }
+}
+
+function copyStateBlock(){
+  const state = document.getElementById("stateSelTop").value;
+  const m = modeFor(state);
+  if (m==="NSL") return copyFrom("nslDisclosureBox");
+  if (state==="Florida") return copyFrom("flStandardDisclosureBox");
+  // else copy the general recording intro box
+  return copyFrom("recordingIntroBox");
+}
+
+/* =========================
+   Stepper + navigation
+========================= */
+function scrollToId(id){
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({behavior:"smooth", block:"start"});
+  setActiveStep(id);
+}
+function setActiveStep(targetId){
+  document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));
+  const step = document.querySelector(`.step[data-target="${targetId}"]`);
+  if (step) step.classList.add("active");
+}
+function goNext(id){
+  // gentle reminders only
+  if (id==="sectionCredit"){
+    if (!document.getElementById("softPullChk").checked){
+      // not a hard gate; just a soft reminder
+      alert("Reminder: click Soft Pull Authorized if you already got the yes.");
+    }
+  }
+  scrollToId(id);
+}
+
+/* =========================
+   Invisible control states
+========================= */
+function renderSoftPullReminder(){
+  const checked = document.getElementById("softPullChk").checked;
+  document.getElementById("softPullReminder").style.display = checked ? "none" : "block";
+
+  document.getElementById("statusSoftPull").textContent = checked ? "Soft Pull: Yes" : "Soft Pull: Not yet";
+  document.getElementById("statusSoftPull").className = checked ? "badge green" : "badge warn";
+}
+function renderRecordingAndAgreement(){
+  const rec = document.getElementById("recordingChk").checked;
+  document.getElementById("statusRecording").textContent = rec ? "Recording: Yes" : "Recording: Not yet";
+  document.getElementById("statusRecording").className = rec ? "badge green" : "badge warn";
+
+  // Agreement lock (this is the ONE strict control)
+  const btn = document.getElementById("sendAgreementBtn");
+  const note = document.getElementById("agreementLockNote");
+  if (rec){
+    btn.disabled = false;
+    note.style.display = "none";
+    document.getElementById("statusAgreement").textContent = "Agreement: Unlocked";
+    document.getElementById("statusAgreement").className = "badge green";
+  }else{
+    btn.disabled = true;
+    note.style.display = "block";
+    document.getElementById("statusAgreement").textContent = "Agreement: Locked";
+    document.getElementById("statusAgreement").className = "badge warn";
+  }
+}
+
+function sendAgreementDemo(){
+  alert("Agreement unlocked.\n\nNext: Document tab → RUN → OK (per your process).");
+}
+
+/* =========================
+   Reset
+========================= */
+function resetAll(){
+  // preserve repName (saved)
+  document.getElementById("clientName").value = "";
+  document.getElementById("softPullChk").checked = false;
+  document.getElementById("recordingChk").checked = false;
+
+  document.getElementById("stateSelTop").value = "Florida";
+  document.getElementById("stateSelOpener").value = "Florida";
+
+  refreshOpenerScript();
+  syncStateEverywhere("Florida");
+  renderSoftPullReminder();
+  renderRecordingAndAgreement();
+  setActiveStep("sectionOpener");
+  scrollToId("sectionOpener");
+}
+
+/* =========================
+   Init
+========================= */
+document.addEventListener("DOMContentLoaded", ()=>{
+  populateStates();
+  loadRepName();
+
+  // wire stepper
+  document.querySelectorAll(".step").forEach(s=>{
+    s.addEventListener("click", ()=> scrollToId(s.getAttribute("data-target")));
+  });
+
+  // state selectors
+  document.getElementById("stateSelTop").addEventListener("change", (e)=> syncStateEverywhere(e.target.value));
+  document.getElementById("stateSelOpener").addEventListener("change", (e)=> syncStateEverywhere(e.target.value));
+
+  // rep + client change
+  document.getElementById("repName").addEventListener("input", refreshOpenerScript);
+  document.getElementById("clientName").addEventListener("input", refreshOpenerScript);
+
+  // checkboxes
+  document.getElementById("softPullChk").addEventListener("change", ()=>{
+    renderSoftPullReminder();
+  });
+  document.getElementById("recordingChk").addEventListener("change", ()=>{
+    renderRecordingAndAgreement();
+  });
+
+  // initial render
+  refreshOpenerScript();
+  syncStateEverywhere("Florida");
+  renderSoftPullReminder();
+  renderRecordingAndAgreement();
+});
+</script>
+
+</body>
+</html>
