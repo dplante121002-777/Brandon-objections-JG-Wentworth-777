@@ -138,15 +138,23 @@ textarea{min-height:220px;resize:vertical;white-space:pre-wrap;line-height:1.35}
 .badge.warn{background:#fff7da;border-color:#fde68a;color:#7a4b00;font-weight:900}
 .badge.danger{background:#fee2e2;border-color:#fecaca;color:#b91c1c;font-weight:900}
 
-.inline{
-  display:flex;gap:10px;flex-wrap:wrap;align-items:center;
-}
+.inline{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
 .chk{
   display:flex;gap:8px;align-items:center;
   padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:#fff;
 }
 .chk input{width:auto;transform:scale(1.05)}
 .small{font-size:12px;color:var(--muted)}
+
+.quickrow{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 0}
+.qbtn{
+  border:1px solid var(--line);
+  background:#f7fbf8;color:#0a5230;
+  padding:8px 10px;border-radius:999px;
+  font-size:13px;font-weight:800;cursor:pointer;
+}
+.qbtn.secondary{background:#f4f6fb;color:#23304f}
+.qbtn.danger{background:#fef2f2;color:#b91c1c;border-color:#fecaca}
 
 hr{border:none;border-top:1px solid var(--line);margin:12px 0}
 </style>
@@ -157,7 +165,7 @@ hr{border:none;border-top:1px solid var(--line);margin:12px 0}
   <div class="logo">JG</div>
   <div>
     <h1>ClosenStein — Control Cockpit (Master)</h1>
-    <div class="sub">Comprehensive + effective. Minimal friction. Compliance is invisible until needed.</div>
+    <div class="sub">Comprehensive + effective. Minimal friction. Objections are isolated (no repsplaining).</div>
   </div>
 </header>
 
@@ -190,6 +198,7 @@ hr{border:none;border-top:1px solid var(--line);margin:12px 0}
       <button class="btn btn-ghost" type="button" onclick="copyFrom('openerScript')">Copy Opener</button>
       <button class="btn btn-ghost" type="button" onclick="copyFrom('creditScript')">Copy Credit</button>
       <button class="btn btn-ghost" type="button" onclick="copyFrom('solutionScript')">Copy Solution</button>
+      <button class="btn btn-ghost" type="button" onclick="copyFrom('objectionBox')">Copy Objection</button>
       <button class="btn btn-primary" type="button" onclick="scrollToId('sectionOpener')">You are here</button>
       <button class="btn btn-danger" type="button" onclick="resetAll()">Reset</button>
     </div>
@@ -200,8 +209,9 @@ hr{border:none;border-top:1px solid var(--line);margin:12px 0}
     <div class="step active" data-target="sectionOpener">1) Opener</div>
     <div class="step" data-target="sectionCredit">2) Credit + Reality</div>
     <div class="step" data-target="sectionSolution">3) Solution</div>
-    <div class="step" data-target="sectionEnroll">4) Enroll</div>
-    <div class="step" data-target="sectionCompliance">5) Recording + Agreement</div>
+    <div class="step" data-target="sectionObjections">4) Objections</div>
+    <div class="step" data-target="sectionEnroll">5) Enroll</div>
+    <div class="step" data-target="sectionCompliance">6) Recording + Agreement</div>
   </div>
 
   <!-- 1) OPENER -->
@@ -271,7 +281,7 @@ Then on Creditors tab click the top of header for checked boxes so checked credi
           <input type="checkbox" id="softPullChk" />
           Soft Pull Authorized (click once)
         </label>
-        <span class="small">This is the only “pre-credit” control we keep.</span>
+        <span class="small">Only pre-credit control we keep.</span>
       </div>
       <button class="btn btn-primary" type="button" onclick="goNext('sectionCredit')">Next → Credit + Reality</button>
     </div>
@@ -351,7 +361,7 @@ Quick note: You haven’t clicked “Soft Pull Authorized” yet. If you already
     </div>
 
     <div class="lockline">
-      <div class="small">If momentum slips: ask “I feel like something shifted — what’s coming up for you?” Then shut up.</div>
+      <div class="small">If momentum slips: “I feel like something shifted — what’s coming up?” (Stop.)</div>
       <button class="btn btn-primary" type="button" onclick="goNext('sectionSolution')">Next → Solution</button>
     </div>
   </div>
@@ -384,14 +394,47 @@ Objection isolation:
     </div>
 
     <div class="lockline">
-      <div class="small">Rule: after the number, you do not speak until they speak.</div>
+      <div class="small">Rule: after the number, do not speak until they speak.</div>
+      <button class="btn btn-primary" type="button" onclick="goNext('sectionObjections')">Next → Objections</button>
+    </div>
+  </div>
+
+  <!-- 4) OBJECTIONS -->
+  <div class="card" id="sectionObjections">
+    <h2>4) Objections (Isolate → Diagnose → One Question)</h2>
+    <p class="hint">No repsplaining. One question. Silence. Make it specific.</p>
+
+    <div class="quickrow">
+      <button class="qbtn" data-obj="think">Think about it</button>
+      <button class="qbtn" data-obj="amount">Too expensive</button>
+      <button class="qbtn" data-obj="credit">Credit score fear</button>
+      <button class="qbtn" data-obj="spouse">Talk to spouse</button>
+      <button class="qbtn secondary" data-obj="loan">Only want a loan</button>
+      <button class="qbtn secondary" data-obj="trust">Not sure I trust this</button>
+      <button class="qbtn danger" data-obj="reset">Reset momentum</button>
+    </div>
+
+    <div class="highlight" id="objectionBox" style="margin-top:10px">
+Tap an objection above.
+    </div>
+
+    <div class="notice" style="margin-top:10px">
+Universal rule:
+1) Ask a narrowing question.
+2) Shut up.
+3) Mirror their answer in one line.
+4) Ask ONE more question that forces specificity.
+    </div>
+
+    <div class="lockline">
+      <div class="small">If you start explaining, stop and ask: “Which part feels unclear?”</div>
       <button class="btn btn-primary" type="button" onclick="goNext('sectionEnroll')">Next → Enroll</button>
     </div>
   </div>
 
-  <!-- 4) ENROLL -->
+  <!-- 5) ENROLL -->
   <div class="card" id="sectionEnroll">
-    <h2>4) Enroll (Expense Report → ACH)</h2>
+    <h2>5) Enroll (Expense Report → ACH)</h2>
     <p class="hint">Simple, calm logistics. No chaos. Keep it boring.</p>
 
     <div class="script">
@@ -431,14 +474,14 @@ Read me the routing number — I’ll repeat it back slowly.”
     </div>
 
     <div class="lockline">
-      <div class="small">Keep your tone low. The more calm you are, the more safe it feels.</div>
+      <div class="small">Keep tone low. Banking should feel boring.</div>
       <button class="btn btn-primary" type="button" onclick="goNext('sectionCompliance')">Next → Recording + Agreement</button>
     </div>
   </div>
 
-  <!-- 5) COMPLIANCE + AGREEMENT -->
+  <!-- 6) COMPLIANCE + AGREEMENT -->
   <div class="card" id="sectionCompliance">
-    <h2>5) State / Recording → Agreement (Invisible Control)</h2>
+    <h2>6) State / Recording → Agreement (Invisible Control)</h2>
     <p class="hint">Compliance shows only what matters for THIS state.</p>
 
     <div class="notice" id="stateModelLine">State model loads here…</div>
@@ -492,7 +535,7 @@ The license number issued by the Florida Department of Agriculture and Consumer 
         <input type="checkbox" id="recordingChk" />
         Recording Played (click once)
       </label>
-      <span class="small">Once checked, Agreement unlocks. No yelling. Just logic.</span>
+      <span class="small">Once checked, Agreement unlocks.</span>
     </div>
 
     <div class="softwarn" id="agreementLockNote" style="display:block;margin-top:10px">
@@ -578,50 +621,49 @@ function syncStateEverywhere(state){
   if (top.value !== state) top.value = state;
   if (opener.value !== state) opener.value = state;
 
-  // badges
   document.getElementById("modelBadgeTop").textContent = "Model: " + modelText(state);
-
-  // opener script personalization (optional)
   refreshOpenerScript();
 
-  // NSL popup visibility
+  // NSL popup
   const m = modeFor(state);
   const nslBox = document.getElementById("nslPopup");
   if (m==="NSL"){
     nslBox.style.display = "block";
-    nslBox.textContent = nslBox.textContent.replaceAll("(STATE)", "(" + state + ")").replaceAll("STATE", state);
+    // ensure state label updates cleanly
+    nslBox.textContent = nslBox.textContent.replaceAll("NEW START LEGAL — PRE-CREDIT FLOW (STATE)","NEW START LEGAL — PRE-CREDIT FLOW ("+state+")");
   }else{
     nslBox.style.display = "none";
   }
 
   // compliance visibility
-  const stateLine = document.getElementById("stateModelLine");
-  stateLine.textContent = `State: ${state} • Model: ${modelText(state)}`;
+  document.getElementById("stateModelLine").textContent = `State: ${state} • Model: ${modelText(state)}`;
 
   const nslDisc = document.getElementById("nslDisclosureBox");
   const flDisc = document.getElementById("flStandardDisclosureBox");
   const flBefore = document.getElementById("flBeforeAgreementBox");
 
-  // reset visibility
   nslDisc.style.display = "none";
   flDisc.style.display = "none";
   flBefore.style.display = "none";
 
-  if (m==="NSL"){
-    nslDisc.style.display = "block";
-  }
+  if (m==="NSL") nslDisc.style.display = "block";
   if (state==="Florida"){
-    flDisc.style.display = "block";         // Florida standard disclosure before recording
-    flBefore.style.display = "block";       // Florida TP license block before agreement
+    flDisc.style.display = "block";
+    flBefore.style.display = "block";
   }
-  // WV handled by intro box (no extra text given by you)
-  // Colorado: standard model, no extra blocks unless you add them later
 
-  // recording intro box state token
-  const recIntro = document.getElementById("recordingIntroBox");
-  recIntro.textContent = recIntro.textContent.replace("[STATE]", state);
+  // update recording intro box token safely
+  const rec = document.getElementById("recordingIntroBox");
+  rec.textContent =
+`“Because you’re in ${state}, there’s a specific disclosure/recording I need to play so everything is compliant.”
 
-  // soft pull reminder in Credit section if not checked
+Confirm state model:
+NSL → Play NSL Recording
+AADR/Standard → Play AADR Recording
+WV → Play WV Recording
+
+Florida only: read FL block before agreement`;
+
   renderSoftPullReminder();
 }
 
@@ -645,7 +687,6 @@ function refreshOpenerScript(){
   const name = (document.getElementById("clientName").value || "").trim();
   const rep = (document.getElementById("repName").value || "Reps Name").trim() || "Reps Name";
 
-  // You asked for this EXACT wording. We only optionally insert the client name if typed.
   const openerLine = `"Client Name", this is "Reps Name" at JG Wentworth on a recorded line, it looks like you were looking for some help with debt? (Pause) shhh`;
   const out = openerLine
     .replaceAll(`"Client Name"`, name ? `"${name}"` : `"Client Name"`)
@@ -676,8 +717,78 @@ function copyStateBlock(){
   const m = modeFor(state);
   if (m==="NSL") return copyFrom("nslDisclosureBox");
   if (state==="Florida") return copyFrom("flStandardDisclosureBox");
-  // else copy the general recording intro box
   return copyFrom("recordingIntroBox");
+}
+
+/* =========================
+   Objections (Isolate > Diagnose)
+========================= */
+const OBJECTIONS = {
+  think:
+`“When people say they want to think about it, it’s usually one of two things —
+they’re unsure it works, or unsure it’s right for them.
+Which feels closer?”
+(Stop talking.)`,
+
+  amount:
+`“Got it. Is it that the amount is too high —
+or is it that you don’t see how it solves the problem?”
+(Stop talking.)
+
+If they say amount:
+“Compared to doing nothing for another 6 months, which costs more?”
+(Stop talking.)`,
+
+  credit:
+`“If your score was perfect but the debt was still there, would that actually solve the stress?”
+(Pause.)
+
+“Right now the balance is the real problem.”
+(Pause.)
+
+“Is your concern the temporary dip —
+or the idea of committing to the process?”
+(Stop talking.)`,
+
+  spouse:
+`“Totally fair. If she asked you why this makes sense, what would you tell her?”
+(Stop talking.)
+
+“Let’s lock in the structure so you can show her exactly what the plan looks like.”`,
+
+  loan:
+`“Most people try loans first.
+Quick question: if a loan worked the way you’re expecting… where would you be right now?”
+(Stop.)
+
+“Have you already tried some version of that before?”
+(Stop.)
+
+“So it didn’t fix it — it delayed it.
+If we can get you an end date without a new loan, would it be a bad idea to compare them?”
+(Stop.)`,
+
+  trust:
+`“Fair. When you say trust, do you mean:
+the company…
+the process…
+or the outcome?”
+(Stop talking.)
+
+(Then mirror ONE line)
+“Got it — so it’s the ____.”
+(Pause.)
+
+“What would you need to see or hear for that to feel solid?”`,
+
+  reset:
+`“I feel like something shifted just now. What’s coming up for you?”
+(Stop talking.)`
+};
+
+function loadObjection(key){
+  const box = document.getElementById("objectionBox");
+  box.textContent = OBJECTIONS[key] || "Tap an objection above.";
 }
 
 /* =========================
@@ -695,10 +806,8 @@ function setActiveStep(targetId){
   if (step) step.classList.add("active");
 }
 function goNext(id){
-  // gentle reminders only
   if (id==="sectionCredit"){
     if (!document.getElementById("softPullChk").checked){
-      // not a hard gate; just a soft reminder
       alert("Reminder: click Soft Pull Authorized if you already got the yes.");
     }
   }
@@ -720,7 +829,6 @@ function renderRecordingAndAgreement(){
   document.getElementById("statusRecording").textContent = rec ? "Recording: Yes" : "Recording: Not yet";
   document.getElementById("statusRecording").className = rec ? "badge green" : "badge warn";
 
-  // Agreement lock (this is the ONE strict control)
   const btn = document.getElementById("sendAgreementBtn");
   const note = document.getElementById("agreementLockNote");
   if (rec){
@@ -744,7 +852,6 @@ function sendAgreementDemo(){
    Reset
 ========================= */
 function resetAll(){
-  // preserve repName (saved)
   document.getElementById("clientName").value = "";
   document.getElementById("softPullChk").checked = false;
   document.getElementById("recordingChk").checked = false;
@@ -752,6 +859,7 @@ function resetAll(){
   document.getElementById("stateSelTop").value = "Florida";
   document.getElementById("stateSelOpener").value = "Florida";
 
+  loadObjection(""); // reset
   refreshOpenerScript();
   syncStateEverywhere("Florida");
   renderSoftPullReminder();
@@ -767,32 +875,29 @@ document.addEventListener("DOMContentLoaded", ()=>{
   populateStates();
   loadRepName();
 
-  // wire stepper
   document.querySelectorAll(".step").forEach(s=>{
     s.addEventListener("click", ()=> scrollToId(s.getAttribute("data-target")));
   });
 
-  // state selectors
   document.getElementById("stateSelTop").addEventListener("change", (e)=> syncStateEverywhere(e.target.value));
   document.getElementById("stateSelOpener").addEventListener("change", (e)=> syncStateEverywhere(e.target.value));
 
-  // rep + client change
   document.getElementById("repName").addEventListener("input", refreshOpenerScript);
   document.getElementById("clientName").addEventListener("input", refreshOpenerScript);
 
-  // checkboxes
-  document.getElementById("softPullChk").addEventListener("change", ()=>{
-    renderSoftPullReminder();
-  });
-  document.getElementById("recordingChk").addEventListener("change", ()=>{
-    renderRecordingAndAgreement();
+  document.getElementById("softPullChk").addEventListener("change", renderSoftPullReminder);
+  document.getElementById("recordingChk").addEventListener("change", renderRecordingAndAgreement);
+
+  // objection buttons
+  document.querySelectorAll("[data-obj]").forEach(btn=>{
+    btn.addEventListener("click", ()=> loadObjection(btn.getAttribute("data-obj")));
   });
 
-  // initial render
   refreshOpenerScript();
   syncStateEverywhere("Florida");
   renderSoftPullReminder();
   renderRecordingAndAgreement();
+  loadObjection("");
 });
 </script>
 
